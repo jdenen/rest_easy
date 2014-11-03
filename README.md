@@ -45,7 +45,21 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+Use `RestEasy.get_until` if you're testing the truthiness of a validation. Use `RestEasy.get_while` if you're testing falseness of a validation. Both methods require a valid URI and a validation block. Optionally, you can pass a timeout in seconds (defaults to 10) and an options hash that will be passed to RestClient.
+
+```ruby
+# fails after 10 seconds
+RestEasy.get_until('http://twitter.com'){ 1 == 0 }
+
+# fails after 3 seconds
+RestEasy.get_while('http://twitter.com', 3){ 1 == 1 }
+
+# pass the GET response to your validation block
+RestEasy.get_until('http://twitter.com'){ |response| response.code == 200 }
+
+# add cookies to your GET request with the options hash
+RestEasy.get_while('http://twitter.com', 10, cookies: {auth_token: 'blah'}){ |response| response.code == 403 }
+```
 
 ## Contributing
 
