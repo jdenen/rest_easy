@@ -8,8 +8,8 @@ Gem::Specification.new do |spec|
   spec.version       = RestEasy::VERSION
   spec.authors       = ["Johnson Denen"]
   spec.email         = ["jdenen@manta.com"]
-  spec.summary       = %q{Retrieve an API response until it passes a validation or times out.}
-  spec.description   = %q{Retrieve an API response until it passes a validation or times out.}
+  spec.summary       = %q{Test an API call until its response passes validation or times out.}
+  spec.description   = %q{Test an API call until its response passes validation or times out.}
   spec.homepage      = "http://github.com/jdenen/rest_easy"
   spec.license       = "MIT"
 

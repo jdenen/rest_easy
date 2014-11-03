@@ -25,5 +25,4 @@ module RestEasy
     yield block until Time.now > end_time
     false
   end
-
 end
