@@ -1,10 +1,10 @@
 # RestEasy
 
-The `rest_easy` gem allows you to call an API until its response passes validation (a block) or times out. It's inspired by the `wait_until` functionality common to webdrivers, and I've found it useful in my acceptance testing.
+This gem is a little testing tool I created to help with synchronization issues in a test suite. I was validating automated UI actions against a low-resource test environment API, and those validations were failing in the first second or two following an action. The `rest_easy` gem wraps my API calls in a timeout functionality, letting me iterate until the validation passes or times out after a number of seconds.
 
 ## Example
 
-I've had tests that may have looked like this:
+I took a test that once looked like this (because of a slow test environment):
 
 ```ruby
 it "saves my edit" do
@@ -15,17 +15,17 @@ it "saves my edit" do
 end
 ```
 
-We waited 5 seconds because it could take 1-5 seconds for us to see our edit reflected in the API response (for whatever reason). That's kind of annyoing, especially if it would have only taken 1 second to see the correct response. So, with rest_reasy, the test can look like this:
+And turned it into this:
 
 ```ruby
 it "saves my edit" do
   page_object.field = "Something"
   page_object.save
-  expect(RestEasy.get_until("/call/to/my/API", 5){|data| JSON.load(data)['data']['field'] == 'Something'}).to be_truthy
+  expect(get_until("/call/to/my/API", 5){|data| JSON.load(data)['data']['field'] == 'Something'}).to be true
 end
 ```
 
-Our test now only waits until it gets the response it needs. If that takes 1 second, then our test is 4 seconds faster! If we've broken some functionality, the test will fail after 5 seconds.
+My hard-coded sleep of 5 seconds was wasteful. Now, the test only waits as long as it absolutely needs. It might be 1 second today or 4.5 seconds tomorrow. If it's longer than 5 seconds, the test will fail.
 
 ## Installation
 
@@ -45,8 +45,6 @@ Or install it yourself as:
 
 ## Usage
 
-Use `RestEasy.get_until` if you're testing the truthiness of a validation. Use `RestEasy.get_while` if you're testing falseness of a validation. Both methods require a valid URI and a validation block. Optionally, you can pass a timeout in seconds (defaults to 10) and an options hash that will be passed to RestClient.
-
 ```ruby
 # fails after 10 seconds
 RestEasy.get_until('http://twitter.com'){ 1 == 0 }
@@ -60,6 +58,9 @@ RestEasy.get_until('http://twitter.com'){ |response| response.code == 200 }
 # add cookies to your GET request with the options hash
 RestEasy.get_while('http://twitter.com', 10, cookies: {auth_token: 'blah'}){ |response| response.code == 403 }
 ```
+
+## Todo
+The gem is tied to `rest-client`, but I'd like to make any REST gem work. Also, I've only written methods for GETs. I need to add POSTs, PUTs, etc. Pull requests are welcome!
 
 ## Contributing
 
